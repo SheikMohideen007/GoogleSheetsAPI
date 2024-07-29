@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:myapp/utils/alerts.dart';
+import 'package:myapp/utils/colorpicker.dart';
 import 'package:myapp/utils/customized_textfield.dart';
 
 class DetailScreen extends StatefulWidget {
@@ -18,6 +19,8 @@ class _DetailScreenState extends State<DetailScreen> {
   int descriptionMaxLines = 1;
   bool isImageSelected = false;
   bool isRead = true;
+  Color color = Colors.white;
+  Color tempColor = Colors.white;
   @override
   void initState() {
     super.initState();
@@ -37,7 +40,7 @@ class _DetailScreenState extends State<DetailScreen> {
     devWidth = MediaQuery.of(context).size.width;
     return SafeArea(
       child: Scaffold(
-        backgroundColor: Colors.white,
+        backgroundColor: color,
         appBar: AppBar(
           backgroundColor: Colors.transparent,
           elevation: 0,
@@ -48,9 +51,29 @@ class _DetailScreenState extends State<DetailScreen> {
               icon: Icon(Icons.arrow_back_ios, color: Colors.black)),
           actions: [
             !isRead
-                ? IconButton(
-                    onPressed: () {},
-                    icon: Icon(Icons.palette, color: Colors.brown))
+                ? Row(
+                    children: [
+                      Text('Change palette',
+                          style: TextStyle(color: Colors.black)),
+                      SizedBox(width: devWidth * 0.02),
+                      GestureDetector(
+                        //opening the color dialog picker to set the notes background
+                        onTap: () => Colorpicker.colorPickerDialog(
+                            context: context,
+                            onColorChanged: (color) {
+                              setState(() {
+                                this.color = color;
+                              });
+                            }),
+                        child: Padding(
+                          padding: EdgeInsets.only(right: 10),
+                          child: SizedBox(
+                              width: devWidth * 0.08,
+                              child: Image.asset('images/palette.png')),
+                        ),
+                      )
+                    ],
+                  )
                 : SizedBox(),
             !isRead
                 ? IconButton(
@@ -134,7 +157,8 @@ class _DetailScreenState extends State<DetailScreen> {
                   isRead = false;
                 } else {
                   if (title.text == tempTitle &&
-                      description.text == tempDescription) {
+                      description.text == tempDescription &&
+                      tempColor == color) {
                     isRead = true;
                   } else {
                     Alerts.showAlert(
@@ -150,6 +174,7 @@ class _DetailScreenState extends State<DetailScreen> {
                           //rollback to the previous changes
                           description.text = tempDescription;
                           title.text = tempTitle;
+                          color = tempColor;
                           isRead = true;
                         });
                   }
