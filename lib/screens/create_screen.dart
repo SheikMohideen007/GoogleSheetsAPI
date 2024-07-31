@@ -2,6 +2,7 @@ import 'package:flex_color_picker/flex_color_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:myapp/utils/colorpicker.dart';
 import 'package:myapp/utils/customized_textfield.dart';
+import 'package:myapp/utils/snackbar.dart';
 
 class CreateScreen extends StatefulWidget {
   const CreateScreen({super.key});
@@ -98,7 +99,12 @@ class _CreateScreenState extends State<CreateScreen> {
           ),
           floatingActionButton: FloatingActionButton.extended(
               onPressed: () {
-                Navigator.pop(context);
+                if (title.text.isEmpty || description.text.isEmpty) {
+                  ScaffoldMessenger.of(context)
+                      .showSnackBar(SnackbarUtil.snack);
+                } else {
+                  Navigator.pop(context);
+                }
               },
               label: Row(
                 children: [
