@@ -102,7 +102,7 @@ class _CreateScreenState extends State<CreateScreen> {
                 if (title.text.isEmpty || description.text.isEmpty) {
                   ScaffoldMessenger.of(context)
                       .showSnackBar(SnackbarUtil.snack);
-                } else {
+                } else { 
                   Navigator.pop(context);
                 }
               },
