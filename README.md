@@ -1,16 +1,27 @@
-# myapp
+# API Notes App
 
-A new Flutter project.
+ Notes Application using Google Sheets API
 
-## Getting Started
+# Here is a Step-by-step to connect App with Google Sheet API
 
-This project is a starting point for a Flutter application.
+Need to use a **gsheets: ^0.5.0** dependency from pub.dev to use sheet API.
 
-A few resources to get you started if this is your first Flutter project:
+Create a account in **Google cloud console** and create a project then select the project to use the **Google sheet API service**.
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+Enable the **Google sheets Api** for the project.
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+Create a service account and parallely create google sheet.
+
+Click the **share** button then share with the **service account email** which we created in the before step.
+
+Now through the API we can access the google sheets which we created.
+
+
+
+
+
+
+
+
+
+
