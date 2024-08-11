@@ -1,5 +1,8 @@
+import 'dart:math';
+
 import 'package:flex_color_picker/flex_color_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:myapp/api/gsheet_crud.dart';
 import 'package:myapp/utils/colorpicker.dart';
 import 'package:myapp/utils/customized_textfield.dart';
 import 'package:myapp/utils/snackbar.dart';
@@ -19,10 +22,10 @@ class _CreateScreenState extends State<CreateScreen> {
   int descriptionMaxLines = 1;
   bool isImageSelected = false;
   Color color = Colors.white;
+  String id = "";
   @override
   void initState() {
     super.initState();
-    setState(() {});
   }
 
   @override
@@ -100,9 +103,24 @@ class _CreateScreenState extends State<CreateScreen> {
           floatingActionButton: FloatingActionButton.extended(
               onPressed: () {
                 if (title.text.isEmpty || description.text.isEmpty) {
-                  ScaffoldMessenger.of(context)
-                      .showSnackBar(SnackbarUtil.snack);
-                } else { 
+                  SnackbarUtil.viewSnackBar(
+                      text: "'Both fields are required'", context: context);
+                } else {
+                  setState(() {});
+                  id = getRandomString();
+                  String time =
+                      '${DateTime.now().day}-${DateTime.now().month}-${DateTime.now().year}';
+                  List note = [
+                    id,
+                    title.text.trim(),
+                    description.text.trim(),
+                    color == Colors.white
+                        ? Colors.blue.toString()
+                        : color.toString(),
+                    time,
+                    'none'
+                  ];
+                  GsheetCrud.addNotes(note);
                   Navigator.pop(context);
                 }
               },
@@ -114,5 +132,19 @@ class _CreateScreenState extends State<CreateScreen> {
                 ],
               ))),
     );
+  }
+
+  String getRandomString() {
+    Random random = Random();
+    String alphaNumberic =
+        "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ01234567890";
+
+    //creating a random string of length 20
+    String randomString = "";
+    for (int i = 1; i <= 20; i++) {
+      int ran = random.nextInt(alphaNumberic.length - 1);
+      randomString += alphaNumberic[ran];
+    }
+    return randomString;
   }
 }

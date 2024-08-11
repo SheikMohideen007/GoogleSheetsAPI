@@ -1,10 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:gsheets/gsheets.dart';
+import 'package:myapp/api/gsheet_crud.dart';
+import 'package:myapp/screens/home.dart';
 import 'package:myapp/utils/alerts.dart';
 import 'package:myapp/utils/colorpicker.dart';
 import 'package:myapp/utils/customized_textfield.dart';
+import 'package:myapp/utils/snackbar.dart';
 
 class DetailScreen extends StatefulWidget {
-  const DetailScreen({super.key});
+  final List note;
+  const DetailScreen({super.key, required this.note});
 
   @override
   State<DetailScreen> createState() => _DetailScreenState();
@@ -25,12 +30,13 @@ class _DetailScreenState extends State<DetailScreen> {
   void initState() {
     super.initState();
     setState(() {
-      description.text =
-          "Notes Description  sfnjsf jn jsf sjbsfbsf.. kjb jknddfjb  kjbdgf jkndg  jnd kjndfsg  kjndsg kndsf k jdhsbfd jhbdfhb dsafbdfjkbdf fdkjbdfb kjndsjfdf kndfn kjndsf kjbdsf kjbsdf  dksjbfd jbdsfg kjndsf kjbdsf  dskbnds dnk dnm nmd mnd  fdmn gnmd gmn jng nmd gmn dgn dmn gkjh wdj jewbgfjs sdjkndgn dgoiubsn g";
-      title.text =
-          "Notes Heading jksdjfk kjhdf kjhewf kjbhdf kbsdfkjf kjbdsf fkjbdw fjn dfn  jkbdsf kjhdaf jhbfe kjnd Notes Heading jksdjfk kjhdf kjhewf kjbhdf kbsdfkjf kjbdsf fkjbdw fjn dfn  jkbdsf kjhdaf jhbfe kjnd Notes Heading jksdjfk kjhdf kjhewf kjbhdf kbsdfkjf kjbdsf fkjbdw fjn dfn  jkbdsf kjhdaf jhbfe kjnd Notes Heading ";
+      print(widget.note);
+      title.text = widget.note[1];
+      description.text = widget.note[2];
+      color = widget.note[3];
       tempTitle = title.text;
       tempDescription = description.text;
+      tempColor = color;
     });
   }
 
@@ -77,7 +83,16 @@ class _DetailScreenState extends State<DetailScreen> {
                 : SizedBox(),
             !isRead
                 ? IconButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      if (title.text == tempTitle &&
+                          description.text == tempDescription &&
+                          tempColor == color) {
+                        SnackbarUtil.viewSnackBar(
+                            text: 'No Changes Found', context: context);
+                      } else {
+                        saveAlert(context);
+                      }
+                    },
                     icon: Icon(Icons.save, color: Colors.green.shade700))
                 : SizedBox(),
             IconButton(
@@ -86,7 +101,9 @@ class _DetailScreenState extends State<DetailScreen> {
                     content: 'Do you want to delete?',
                     context: context,
                     onYes: () {
-                      Navigator.pop(context);
+                      GsheetCrud.deleteNotes(key: widget.note[0]);
+                      Navigator.pushReplacement(context,
+                          MaterialPageRoute(builder: (context) => Home()));
                     },
                     onNo: () {
                       Navigator.pop(context);
@@ -106,6 +123,7 @@ class _DetailScreenState extends State<DetailScreen> {
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: devWidth * 0.05),
                 child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     isRead
                         ? Column(
@@ -161,22 +179,7 @@ class _DetailScreenState extends State<DetailScreen> {
                       tempColor == color) {
                     isRead = true;
                   } else {
-                    Alerts.showAlert(
-                        context: context,
-                        content: 'Do you want to save the changes ?',
-                        onYes: () {
-                          Navigator.pop(context);
-                          isRead = true;
-                          print('here need to save the notes');
-                        },
-                        onNo: () {
-                          Navigator.pop(context);
-                          //rollback to the previous changes
-                          description.text = tempDescription;
-                          title.text = tempTitle;
-                          color = tempColor;
-                          isRead = true;
-                        });
+                    saveAlert(context);
                   }
                 }
               });
@@ -192,38 +195,29 @@ class _DetailScreenState extends State<DetailScreen> {
       ),
     );
   }
+
+  Widget saveAlert(BuildContext context) {
+    return Alerts.showAlert(
+        context: context,
+        content: 'Do you want to save the changes ?',
+        onYes: () {
+          Navigator.pop(context);
+          List note = ["", "", "", widget.note[4], ""];
+          //here, skipping the id in the note list
+          note[0] = title.text;
+          note[1] = description.text;
+          note[2] = color.toString();
+          note[4] = DateTime.now().toString();
+          GsheetCrud.updateNotes(key: widget.note[0], note: note);
+          isRead = true;
+        },
+        onNo: () {
+          Navigator.pop(context);
+          //rollback to the previous changes
+          description.text = tempDescription;
+          title.text = tempTitle;
+          color = tempColor;
+          isRead = true;
+        });
+  }
 }
-
-
-
-
-
-
-
-
-
- // isImageSelected
-                    //     ? SizedBox(
-                    //         height: devHeight * 0.05,
-                    //       )
-                    //     : SizedBox(),
-                    // isImageSelected
-                    //     ? Padding(
-                    //         padding: EdgeInsets.symmetric(
-                    //             vertical: devHeight * 0.02),
-                    //         child:
-                    //             Text('Image', style: TextStyle(fontSize: 20)),
-                    //       )
-                    //     : SizedBox(),
-                    // isImageSelected
-                    //     ? Padding(
-                    //         padding: EdgeInsets.only(bottom: devHeight * 0.15),
-                    //         child: Container(
-                    //           height: devHeight * 0.4,
-                    //           width: devWidth * 0.8,
-                    //           decoration: BoxDecoration(
-                    //               borderRadius: BorderRadius.circular(10),
-                    //               color: Colors.grey.shade300),
-                    //         ),
-                    //       )
-                    //     : SizedBox()

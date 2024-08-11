@@ -1,10 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:myapp/api/gsheet_crud.dart';
+import 'package:myapp/screens/home.dart';
 import 'package:myapp/utils/alerts.dart';
 
 class NotesCard extends StatelessWidget {
-  // final Colors
-  const NotesCard({super.key});
+  final String title, description, time, id;
+  final bool isEdited;
+  final Color color;
+  const NotesCard(
+      {super.key,
+      required this.title,
+      required this.description,
+      required this.isEdited,
+      required this.time,
+      required this.id,
+      required this.color});
 
   @override
   Widget build(BuildContext context) {
@@ -14,7 +25,7 @@ class NotesCard extends StatelessWidget {
         height: devHeight * 0.4,
         width: devWidth * 0.45,
         child: Card(
-          color: Colors.blue,
+          color: color,
           shape:
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
           child: Padding(
@@ -23,8 +34,7 @@ class NotesCard extends StatelessWidget {
               children: [
                 Padding(
                   padding: EdgeInsets.symmetric(horizontal: devWidth * 0.02),
-                  child: Text(
-                      'Notes Heading jksdjfk kjhdf kjhewf kjbhdf kbsdfkjf kjbdsf fkjbdw fjn dfn  jkbdsf kjhdaf jhbfe kjnd',
+                  child: Text(title,
                       style: TextStyle(
                           fontSize: 19, overflow: TextOverflow.ellipsis)),
                 ),
@@ -36,7 +46,7 @@ class NotesCard extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                          'Notes Description  sfnjsf jn jsf sjbsfbsf.. kjb jknddfjb  kjbdgf jkndg  jnd kjndfsg  kjndsg kndsf k jdhsbfd jhbdfhb dsafbdfjkbdf fdkjbdfb kjndsjfdf kndfn kjndsf kjbdsf kjbsdf  dksjbfd jbdsfg kjndsf kjbdsf  dskbnds dnk dnm nmd mnd  fdmn gnmd gmn jng nmd gmn dgn dmn gkjh wdj jewbgfjs sdjkndgn dgoiubsn g',
+                          description,
                           style: TextStyle(
                               fontSize: 12, overflow: TextOverflow.ellipsis),
                           maxLines: 7,
@@ -46,7 +56,9 @@ class NotesCard extends StatelessWidget {
                           children: [
                             RichText(
                               text: TextSpan(
-                                  text: 'Last Updated\nat ',
+                                  text: isEdited
+                                      ? 'Last Updated\nat '
+                                      : 'Created\nat ',
                                   style: GoogleFonts.poppins(
                                     textStyle: TextStyle(
                                       color: Colors.white,
@@ -55,7 +67,7 @@ class NotesCard extends StatelessWidget {
                                   ),
                                   children: [
                                     TextSpan(
-                                        text: ' 20-07-24',
+                                        text: ' $time',
                                         style: GoogleFonts.poppins(
                                           textStyle: TextStyle(
                                             color: Colors.black,
@@ -70,7 +82,7 @@ class NotesCard extends StatelessWidget {
                                   content: 'Do you want to delete?',
                                   context: context,
                                   onYes: () {
-                                    Navigator.pop(context);
+                                    GsheetCrud.deleteNotes(key: id);
                                   },
                                   onNo: () {
                                     Navigator.pop(context);
