@@ -1,6 +1,6 @@
 # API Notes App
 
- Notes Application using Google Sheets API
+ Notes Application using Google Sheets API.
 
 # Here is a Step-by-step to connect App with Google Sheet API
 
